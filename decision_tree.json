@@ -1,0 +1,11 @@
+{
+  "type": "split3_meta",
+  "feature_order": ["wind_speed_mps", "dry_bulb_temperature", "precipitation_mm", "relative_humidity_pct"],
+  "bins": {
+    "wind_speed_mps": [[0, 3], [3, 8], [8, "inf"]],
+    "dry_bulb_temperature": [[-50, 5], [5, 25], [25, "inf"]],
+    "precipitation_mm": [[0, 0.1], [0.1, 5], [5, "inf"]],
+    "relative_humidity_pct": [[0, 30], [30, 60], [60, "inf"]]
+  },
+  "lookup": "decision_table.json"
+}
