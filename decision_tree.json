@@ -7,5 +7,5 @@
     "precipitation_mm": [[0, 0.1], [0.1, 5], [5, "inf"]],
     "relative_humidity_pct": [[0, 30], [30, 60], [60, "inf"]]
   },
-  "rule": "sum(indices) <= 2 ? 'A' : (sum(indices) <= 5 ? 'B' : 'C')"
+  "rule": "lambda i1,i2,i3,i4,s: 'A' if s<=2 else ('B' if s<=5 else 'C')"
 }

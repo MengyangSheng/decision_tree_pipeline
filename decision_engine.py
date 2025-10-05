@@ -36,19 +36,16 @@ class DecisionEngine:
             raise ValueError("JSON must contain either 'mapping' or 'rule'.")
             
     def _generate_mapping(self, rule_expr: str):
-        # auto-generate mapping for all 81 combinations (3^4)
+        try:
+            rule_fn = eval(rule_expr, {"__builtins__": {}}, {})
+        except Exception as e:
+            raise ValueError(f"Invalid rule expression: {e}")
+    
         mapping = {}
-        for combo in itertools.product([0, 1, 2], repeat=4):  # 81 combinations
-            i1, i2, i3, i4 = combo
+        for combo in itertools.product([0,1,2], repeat=4):
+            i1,i2,i3,i4 = combo
             s = i1 + i2 + i3 + i4
-    
-            if s <= 2:
-                y = "A"
-            elif s <= 5:
-                y = "B"
-            else:
-                y = "C"
-    
+            y = rule_fn(i1,i2,i3,i4,s)
             mapping["".join(map(str, combo))] = y
         return mapping
 
