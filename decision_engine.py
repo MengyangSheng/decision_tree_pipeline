@@ -6,11 +6,12 @@
 import json
 from math import inf
 from typing import Dict, Any, Optional
+import itertools
 
 class DecisionEngine:
     def __init__(self, table_path: str = "decision_table.json"):
         self.table_path = table_path
-        # default bins boundaries
+        # default bins boundaries, json bins will overide these
         self.bins = {
             "wind_speed_mps": [(0, 3), (3, 8), (8, inf)],
             "dry_bulb_temperature": [(-50, 5), (5, 25), (25, inf)],
@@ -26,7 +27,31 @@ class DecisionEngine:
             tbl = json.load(f)
         if "bins" in tbl:
             self.bins = self._coerce_bins(tbl["bins"])
-        self.mapping = tbl["mapping"]
+        if "mapping" in tbl:
+            self.mapping = tbl["mapping"]
+        elif "rule" in tbl:
+            print("[Info] Auto-generating mapping from rule ...")
+            self.mapping = self._generate_mapping(tbl["rule"])
+        else:
+            raise ValueError("JSON must contain either 'mapping' or 'rule'.")
+            
+    def _generate_mapping(self, rule_expr: str):
+        # auto-generate mapping for all 81 combinations (3^4)
+        mapping = {}
+        for combo in itertools.product([0, 1, 2], repeat=4):  # 81 combinations
+            i1, i2, i3, i4 = combo
+            s = i1 + i2 + i3 + i4
+    
+            if s <= 2:
+                y = "A"
+            elif s <= 5:
+                y = "B"
+            else:
+                y = "C"
+    
+            mapping["".join(map(str, combo))] = y
+        return mapping
+
 
     def _coerce_bins(self, b):
         # convert 'inf' strings to python inf in json file
