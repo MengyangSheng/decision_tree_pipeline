@@ -12,11 +12,19 @@ payload = wd.extract()
 
 payload["precipitation_mm"] = 0.0 if payload["precipitation_mm"] is None else payload["precipitation_mm"]
 
-"""if decision rule is changed, generate keys using decision_tree.json and save the generated keys to decision_table.json"""
-engine = DecisionEngine("decision_tree.json")
-engine.export_table("decision_table.json")
+"""AUTO_REGENERATE toggle: True to rebuild decision_table.json automatically"""
+AUTO_REGENERATE = False
 
-"""use keys in decison_table.json to decide"""
-engine = DecisionEngine("decision_table.json")
+if AUTO_REGENERATE:
+    """regenerate decision_table.json from decision_tree.json"""
+    print("[INFO] Regenerating decision table from decision_tree.json ...")
+    engine = DecisionEngine("decision_tree.json")
+    engine.export_table("decision_table.json")
 
-print("decision =", engine.decide(payload))
+else:
+    """use existing keys in decison_table.json to decide"""
+    print("[INFO] Using existing decision_table.json for decision ...")
+    engine = DecisionEngine("decision_table.json")
+
+decision = engine.decide(payload)
+print("Decision =", decision)
