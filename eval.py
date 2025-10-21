@@ -13,7 +13,7 @@ payload = wd.extract()
 payload["precipitation_mm"] = 0.0 if payload["precipitation_mm"] is None else payload["precipitation_mm"]
 
 """AUTO_REGENERATE toggle: True to rebuild decision_table.json automatically"""
-AUTO_REGENERATE = True
+AUTO_REGENERATE = False
 
 if AUTO_REGENERATE:
     """regenerate decision_table.json from decision_tree.json"""

@@ -106,7 +106,19 @@ class DecisionEngine:
         h = self._bin_index(payload.get("relative_humidity_pct"), self.bins["relative_humidity_pct"])
         return f"{w}{t}{p}{h}"
 
-    def decide(self, payload: Dict[str, Any]) -> str:
-        # return final decision
-        key = self._key_from_payload(payload)
-        return self.mapping.get(key, "B")
+    def decide(self, payload: Dict[str, Any]):
+        """run final weather severity score"""
+        if "rule" in getattr(self, "__dict__", {}):
+            pass
+        if hasattr(self, "rule_expr"):
+            # direct score model
+            fn = self.rule_fn
+            wind = payload["wind_vector"]["speed_mps"] or 0
+            temp = payload["dry_bulb_temperature"] or 0
+            prec = payload["precipitation_mm"] or 0
+            hum  = payload["relative_humidity_pct"] or 0
+            score = fn(wind, temp, prec, hum)
+            return score
+        else:
+            key = self._key_from_payload(payload)
+            return self.mapping.get(key, "B")
